@@ -11,7 +11,7 @@
       die("Connection failed: " . $conn->connect_error);
   }
   
-  if ($result = $conn->query("SELECT * FROM vehicle_locations;")) {
+  if ($result = $conn->query("SELECT DISTINCT vl.ID, vl.Worldspace FROM vehicle_locations AS vl, vehicle_spawns AS vs WHERE vl.ID=vs.Location AND vs.MaxNum > 0;")) {
     // "SELECT DISTINCT vg.group_info, vl.worldspace FROM vehicle_spawns AS vs, vehicle_locations AS vl, vehicle_spawns_groups AS vsp, vehicle_groups AS vg WHERE vs.location=vl.id AND vsp.Group_ID=vg.ID AND vsp.Spawn_ID=vs.ID ORDER BY vl.worldspace;"
     $tempArray = array();
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
