@@ -14,7 +14,7 @@
 #### 3. Convert full map to tiles with zoom levels
     1. Install [GDAL](https://gdal.org/index.html) (On Windows you need [Anaconda](https://anaconda.org/))
     2. Head to /map_utils directory
-    3. run "pyhton gdal2tiles.py -p raster -z 0-8 -w none map.png tiles" and wait for it to finish (this can take a while)
+    3. run "pyhton gdal2tiles.py -l -p raster -z 0-x -w none map.png tiles" and wait for it to finish (x is max zoom, i would recommend 7, the bigger the longer it will take)
     4. You should have your finished map in the /tiles folder
     5. Copy the entire folder to /assets
 
