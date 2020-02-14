@@ -1,6 +1,10 @@
-# Setup
+# Requirements
+* nginx/apache webserver
+* php
+* around 1 GB for both topo and sat map
 
-#### Instructions
+# Setup Instructions
+
 1. Unpack Chernarus pbo
     1. Start ArmA III Tools from Steam and start BankRev
     2. Unpack "Arma 2/AddOns/Chernarus_Data_Layers.pbo"
@@ -17,7 +21,7 @@
 3. Convert full map to tiles with zoom levels
     1. Install [GDAL](https://gdal.org/index.html) (On Windows you need [Anaconda](https://anaconda.org/))
     2. Head to /map_utils directory
-    3. run "pyhton gdal2tiles.py -l -p raster -z 0-x -w none map.png tiles" and wait for it to finish (x is max zoom, i would recommend 7, the bigger the longer it will take)
+    3. run "python gdal2tiles.py -l -p raster -z 0-x -w none map.png tiles" and wait for it to finish (x is max zoom, i would recommend 7, the bigger the longer it will take)
     4. You should have your finished map in the /tiles folder
     5. Copy the entire folder to /assets
 
