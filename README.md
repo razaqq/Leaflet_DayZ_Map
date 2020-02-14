@@ -28,7 +28,8 @@
 4. Setup SQL Database for DayZ vehicle spawns
     1. Download DayZ Mod and get SQL scripts from /SQL/version
     2. Execute on database
-    3. Enter DB credentials in /scripts/get-spawns.php
+    3. Enter DB credentials in /scripts/get-spawns-example.php
+    4. Rename /scripts/get-spawns-example.php to /scripts/get-spawns.php
 
 Hope this works for you too!
 
