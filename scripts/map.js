@@ -1,3 +1,7 @@
+/*
+loot: http://maps.izurvive.com/maps/CH-Top/1.4.0/lootmap.gz.json
+*/
+
 var mapSize = 15360;
 var minZoom = 1;
 var maxZoom = 7;
@@ -7,11 +11,22 @@ function zoomLevel() {
     return Math.ceil(Math.log(mapSize / 256) / Math.log(2));
 };
 
+var sat = L.tileLayer('./assets/sat/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 7, tms: false, noWrap: false, continuousWorld: true});
+var topo = L.tileLayer('./assets/topo/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 7, tms: false, noWrap: false, continuousWorld: true});
+
 var map = L.map('map', {
   minZoom: minZoom,
   maxZoom: maxZoom,
-  crs: L.CRS.Simple
+  crs: L.CRS.Simple,
+  layers: [sat]
 });
+
+var layers = {
+    "Satellite": sat,
+    "Topology": topo
+};
+
+L.control.layers(layers).addTo(map);
 
 function project(coords) {
    return map.project(coords, zoom);
@@ -21,17 +36,16 @@ function unproject(coords) {
    return map.unproject(coords, zoom);
 };
 
-/*
-loot: http://maps.izurvive.com/maps/CH-Top/1.4.0/lootmap.gz.json
-*/
-
 map.setView(unproject([mapSize / 2, mapSize / 2]), minZoom + 1);
-
-var tiles = L.tileLayer('./assets/tiles/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 8, tms: false, noWrap: false, continuousWorld: true}).addTo(map);
 
 map.on('mousemove', function (event) {
   var coords = project(event.latlng);
-  document.getElementById("locoverlay").innerHTML = (coords.x / 100).toFixed(2) + ' | ' + ((mapSize - coords.y) / 100).toFixed(2);
+  document.getElementById("locoverlay").innerHTML = (coords.x / 100).toFixed(2) + ' | ' + (coords.y / 100).toFixed(2);
+});
+
+map.on('contextmenu', function (event) {
+  var coords = project(event.latlng);
+  console.log(coords.x, mapSize - coords.y);
 });
 
 function addMarker(x, y) {
@@ -40,17 +54,15 @@ function addMarker(x, y) {
   return;
 }
 
-function addText(x, y, text) {
+function addText(x, y, text, size = 14) {
   y = mapSize - y;
-  new L.Marker(unproject([x, y]), {
+  var m = new L.Marker(unproject([x, y]), {
     icon: new L.DivIcon({
       className: 'townLabel',
-        html: '<span class="townlabel" id="townlabel">' + text + '</span>'
-        // '<img class="my-div-image" src="http://png-3.vector.me/files/images/4/0/402272/aiga_air_transportation_bg_thumb"/>'+
-                
+      html: '<span class="townlabel" id="townlabel" style="font-size: ' + size + 'px">' + text + '</span>'
     })
-  }).addTo(map);
-  return;
+  });
+  return m;
 }
 
 function addIcon(x, y, iconUrl, tooltip) {
@@ -65,11 +77,11 @@ function addIcon(x, y, iconUrl, tooltip) {
 }
 
 async function addCityLabels() {
-  var landmarks = await fetch("./assets/landmarks.json");
-  landmarks = await landmarks.json();
-  for (i = 0; i < landmarks.landmarks.length; i++) {
-    var lm = landmarks.landmarks[i];
-    addText(lm.pos[0], lm.pos[1], lm.name);
+  var cities = await fetch("./assets/cities.json");
+  cities = await cities.json();
+  for (i = 0; i < cities.cities.length; i++) {
+    var lm = cities.cities[i];
+    addText(lm.pos[0], lm.pos[1], lm.name).addTo(map);
   }
   return;
 }
@@ -89,7 +101,7 @@ async function addVehicleSpawns() {
       spawns[pos].push(s.ID);
     }
   }
-  
+
   Object.keys(spawns).forEach(function(posString) {
     var pos = JSON.parse(posString);
     var names = '';
@@ -105,3 +117,27 @@ async function addVehicleSpawns() {
   return;
 }
 addVehicleSpawns();
+
+var landmarkLabels = [];
+async function addLandmarkLabels() {
+  var landmarks = await fetch("./assets/landmarks.json");
+  landmarks = await landmarks.json();
+  for (i = 0; i < landmarks.landmarks.length; i++) {
+    var lm = landmarks.landmarks[i];
+    landmarkLabels.push(addText(lm.pos[0], lm.pos[1], lm.name, 12));
+  }
+  return;
+}
+addLandmarkLabels();
+
+map.on('zoom', function() {
+  if (map.getZoom() > 4) {
+    for (i = 0; i < landmarkLabels.length; i++) {
+      landmarkLabels[i].addTo(map);
+    }
+  } else {
+    for (i = 0; i < landmarkLabels.length; i++) {
+      landmarkLabels[i].remove();
+    }
+  }
+});
