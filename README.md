@@ -1,7 +1,14 @@
+A brower map for vanilla DayZ mod (ArmA II) showing vehicle spawns.
+Working example [here](https://www.perry-swift.de/dayz)
+
+- - - -
+
 # Requirements
 * nginx/apache webserver
 * php
 * around 1 GB for both topo and sat map
+
+- - - -
 
 # Setup Instructions
 
