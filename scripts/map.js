@@ -11,7 +11,7 @@ function zoomLevel() {
     return Math.ceil(Math.log(mapSize / 256) / Math.log(2));
 };
 
-var sat = L.tileLayer('./assets/sat/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 7, tms: false, noWrap: false, continuousWorld: true});
+var sat = L.tileLayer('./assets/sat/{z}/{x}/{y}.jpg', {minZoom: 1, maxZoom: 7, tms: false, noWrap: false, continuousWorld: true});
 var topo = L.tileLayer('./assets/topo/{z}/{x}/{y}.png', {minZoom: 1, maxZoom: 7, tms: false, noWrap: false, continuousWorld: true});
 
 var map = L.map('map', {
@@ -43,10 +43,12 @@ map.on('mousemove', function (event) {
   document.getElementById("locoverlay").innerHTML = (coords.x / 100).toFixed(2) + ' | ' + (coords.y / 100).toFixed(2);
 });
 
+/*
 map.on('contextmenu', function (event) {
   var coords = project(event.latlng);
   console.log(coords.x, mapSize - coords.y);
 });
+*/
 
 function addMarker(x, y) {
   y = mapSize - y;
